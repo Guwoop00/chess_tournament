@@ -13,7 +13,7 @@ class Player:
 
     @classmethod
     def save_players(cls, players):
-        with open("player_list.json", "w") as json_file:
+        with open("data/player_list.json", "w") as json_file:
             for player in players:
                 player_data = {
                     "name": player.name,
@@ -28,7 +28,7 @@ class Player:
     @classmethod
     def load_players(cls):
         player_list = []
-        with open("player_list.json", "r") as json_file:
+        with open("data/player_list.json", "r") as json_file:
             for line in json_file:
                 player_data = json.loads(line)
                 player = cls(player_data["name"], player_data["surname"], player_data["chess_id"], player_data["date_of_birth"], player_data["score"])

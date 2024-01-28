@@ -7,29 +7,13 @@ class MainController:
 
     @classmethod
     def run(cls):
-        main_menu_options = ["Gestion des tournois", "Gestion des joueurs", "Quitter le programme"]
+        main_menu_options = ["Nouveau tournoi", "Gestion des joueurs", "Quitter le programme"]
         choice = ViewMenu.display_menu("Welcome to chess tournament:", main_menu_options)
         
         while choice != 3:
             
             if choice == 1:
-                
-                # Gestion des tournois
-                tournament_menu_options = ["Nouveau tournoi", "Reprendre le tournoi en cours", "Revenir au choix précédent"]
-                tournament_choice = ViewMenu.display_menu("Tournament menu:", tournament_menu_options)
-
-                if tournament_choice == 1:
-                    Tournament.create_new_tournament()
-
-                elif tournament_choice == 2:
-                    print("****************")
-                
-                elif tournament_choice == 3:
-                    MainController.run()
-
-                else:
-                    print("Choix invalide. Veuillez réessayer.")
-                break
+                Tournament.create_new_tournament()
 
             elif choice == 2:
                 

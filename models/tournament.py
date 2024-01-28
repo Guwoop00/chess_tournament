@@ -43,7 +43,25 @@ class Tournament:
         for tournament in tournaments_list:
             print(f"{tournament}\n")
 
-file_path = "/Users/guwoop/Documents/chess_tournament/tournament_list.json"
+file_path = "/Users/guwoop/Documents/chess_tournament/data/tournament_list.json"
 
 if __name__ == "__main__":
     Tournament.all_tournaments_list(file_path)
+
+# Calquer le fichier tournament.py sur playermodels.py
+#
+# Commencer par essayer de lancer une mécanique pour choisir toutes les infos du tournois
+# Infos tournoi + choisir les joueurs dans le JSON avec le chess_id, nombre de manches
+# 
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
