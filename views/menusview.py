@@ -1,7 +1,7 @@
-class ViewMenu:
+class Menu:
 
     @classmethod
-    def display_menu(cls, title, options): # Affichage commun aux menus
+    def display_menu(cls, title, options): 
         print()
         print(title)
         print("********************")
@@ -12,5 +12,4 @@ class ViewMenu:
 
     @classmethod
     def get_user_choice(cls):
-        return int(input("Quel est votre choix ?: "))
-    
+        return int(input("Quel est votre choix ? : "))
