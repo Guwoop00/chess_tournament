@@ -1,4 +1,4 @@
-class Menu:
+class MenuViews:
 
     @classmethod
     def display_menu(cls, title, options): 
@@ -13,3 +13,7 @@ class Menu:
     @classmethod
     def get_user_choice(cls):
         return int(input("Quel est votre choix ? : "))
+    
+    @staticmethod
+    def player_list_print():
+        print("\nListe des joueurs:\n")
