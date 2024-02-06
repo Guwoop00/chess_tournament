@@ -1,4 +1,5 @@
 import json
+import os
 from views.player import PlayerView
 from models.player import Player
 
@@ -23,21 +24,28 @@ class PlayerController:
 
     def player_exists(self, chess_id, players):
         for player in players:
-            if player.chess_id == chess_id:
+            if player["chess_id"] == chess_id:
                 return True
         return False
        
     def load_players_from_json(self, file_path):
         all_players = []
-        with open(file_path, "r") as json_file:
-            player_data_list = json.load(json_file)
-            for player_data in player_data_list:
-                player = Player(**player_data)
-                all_players.append(player)
-                return all_players
-    
+        try:
+            with open(file_path, "r") as json_file:
+                player_data_list = json.load(json_file)
+                for player_data in player_data_list:
+                    player = Player(**player_data)
+                    all_players.append(player.to_json())
+        except json.decoder.JSONDecodeError:
+            # Le fichier est vide ou contient un JSON invalide
+            print("Le fichier JSON est vide ou invalide.")
+        return all_players
+
     def save_players_to_json(self, all_players, file_path):
         with open(file_path, "w") as json_file:
-                json.dump(all_players, json_file)
-                json_file.write('\n')
+            json.dump(all_players, json_file)
 
+
+if __name__ == "__main__":
+    player_controller = PlayerController()
+    player_controller.create_new_player()

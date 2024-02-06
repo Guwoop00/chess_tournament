@@ -217,3 +217,15 @@ if __name__ == "__main__":
             break
             
         print("Programme terminé.")
+
+
+    def load_players_from_json(self, file_path):
+        all_players = []
+        with open(file_path, "r") as json_file:
+            file_content = json_file.read()
+            if file_content.strip(): 
+                player_data_list = json.loads(file_content)
+                for player_data in player_data_list:
+                    player = Player(**player_data)
+                    all_players.append(player)
+        return all_players

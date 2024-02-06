@@ -1,3 +1,5 @@
+from operator import attrgetter
+
 class PlayerView:
 
     @classmethod
@@ -24,5 +26,6 @@ class PlayerView:
     
     @staticmethod
     def display_player_list(all_players):
-        for player in all_players:
-            print(f"{player}\n")
+        sorted_players = sorted(all_players, key=lambda player: (player['surname'], player['name'], player['chess_id']))
+        for player in sorted_players:
+            print(f"Nom: {player['name']}\nPrénom: {player['surname']}\nIdentifiant d'échecs: {player['chess_id']}\nDate de naissance: {player['date_of_birth']}\nScore: {player['score']}\n")
