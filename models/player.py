@@ -10,7 +10,7 @@ class Player:
         return f"{self.name} {self.surname} {self.chess_id} {self.date_of_birth}"
 
     def __repr__(self):
-        return f"Player(name='{self.name}', surname='{self.surname}', chess_id='{self.chess_id}', date_of_birth='{self.date_of_birth}', score={self.score})"
+        return f"{self.name} {self.surname} {self.chess_id} {self.date_of_birth} {self.score}"
 
     def to_json(self):
         return {

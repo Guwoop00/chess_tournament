@@ -22,3 +22,7 @@ class TournamentView:
     def add_more_input(self):
         add_more = input("Voulez-vous ajouter un autre joueur (oui/non) : ")
         return add_more
+    
+    def start_tournament_input(self):
+        start = input("Voulez-vous commencer le tournoi ?")
+        return start

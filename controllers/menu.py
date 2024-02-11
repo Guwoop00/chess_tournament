@@ -1,5 +1,6 @@
 from views.menu import MenuViews
 from views.player import PlayerView
+from views.tournament import TournamentView
 from controllers.tournamentscontroller import TournamentController
 from controllers.playerscontroller import PlayerController
 
@@ -10,8 +11,7 @@ class MainController:
         self.tournament_controller = TournamentController()
         self.player_controller = PlayerController()
         self.player_view = PlayerView()
-
-
+        self.tournament_view = TournamentView()
 
     def main_menu(self):
         all_players = self.player_controller.load_players_from_json("/Users/guwoop/Documents/chess_tournament/data/player_list.json")
@@ -20,8 +20,13 @@ class MainController:
 
         if choice == 1:
             self.player_view.display_player_list(all_players)
-            self.tournament_controller.create_new_tournament()
-
+            players_in_tournament = self.tournament_controller.participating_players_list()
+            self.tournament_controller.create_new_tournament(players_in_tournament)
+            start = self.tournament_view.start_tournament_input()
+            if start == "oui":
+                pairs = self.tournament_controller.pairing_players(players_in_tournament)
+                self.tournament_controller.create_matchs(pairs)
+            
         elif choice == 2:
             player_menu_options = ["Nouveau joueur", "Afficher les joueurs", "Retour au menu principal"]
             sub_choice = self.menu_view.display_menu("Bienvenue au tournoi d'échecs :", player_menu_options)

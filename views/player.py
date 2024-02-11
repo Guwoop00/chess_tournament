@@ -1,4 +1,4 @@
-from operator import attrgetter
+
 
 class PlayerView:
 
@@ -25,7 +25,11 @@ class PlayerView:
         return chess_id
     
     @staticmethod
+    def empty_json_print():
+        print("Le fichier JSON est vide.")
+    
+    @staticmethod
     def display_player_list(all_players):
         sorted_players = sorted(all_players, key=lambda player: (player['surname'], player['name'], player['chess_id']))
         for player in sorted_players:
-            print(f"Nom: {player['name']}\nPrénom: {player['surname']}\nIdentifiant d'échecs: {player['chess_id']}\nDate de naissance: {player['date_of_birth']}\nScore: {player['score']}\n")
+            print(f"\nNom: {player['name']}\nPrénom: {player['surname']}\nIdentifiant d'échecs: {player['chess_id']}\nDate de naissance: {player['date_of_birth']}\nScore: {player['score']}\n")
