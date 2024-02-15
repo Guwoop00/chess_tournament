@@ -17,3 +17,7 @@ class MenuViews:
     @staticmethod
     def player_list_print():
         print("\nListe des joueurs:\n")
+    
+    
+    def input_error(self):
+        print("Input error, entrez une option valide ! ")

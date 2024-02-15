@@ -17,6 +17,7 @@ class TournamentController:
         self.player_view = PlayerView()
         self.tournament_view = TournamentView()
         self.player_controller = PlayerController()
+        self.menu_view = MenuViews()
 
     def start_tournament(self):
         players_in_tournament = self.participating_players_list()
@@ -27,7 +28,10 @@ class TournamentController:
             matchs = self.pairing_players(players_in_tournament, current_round)
             round_name = Round(f"Round {current_round}/{total_rounds}", matchs)
             print(round_name)
-
+            for match in matchs:
+                choice = self.get_result_option(match)
+                self.update_players_score(match, choice)
+            print(matchs)
 
     def pairing_players(self, players_in_tournament, current_round):
         matchs_possible = math.floor(len(players_in_tournament) / 2)
@@ -100,10 +104,59 @@ class TournamentController:
         """
         return a match list
         """
-        match = (
-            f"{player1.name}, {player1.surname}",
-            player1.score,
-            f"{player2.name}, {player2.surname}",
-            player2.score
-        )
+        match = ( [f"{player1.name} {player1.surname}", player1.score],
+                  [f"{player2.name} {player2.surname}", player2.score] )
         return match
+
+    def get_result_option(self, match):
+        print("**************")
+        print(match)
+        print('**************')
+        print('[1] Player 1 wins')
+        print('[N] Draw')
+        print('[2] Player 2 wins')
+        print('**************')
+        print("[Q] Back to main menu ?")
+        choice = input("Qui est le vainqueur  ? ")
+        return choice
+
+    def update_players_score(self, match, choice):
+        if choice == "1":
+            match[0][1] += 1  # Ajoute 1 au score du joueur 1 dans le match
+        elif choice == "N":
+            match[0][1] += 0.5  # Ajoute 0.5 au score du joueur 1 dans le match
+            match[1][1] += 0.5  # Ajoute 0.5 au score du joueur 2 dans le match
+        elif choice == "2":
+            match[1][1] += 1  # Ajoute 1 au score du joueur 2 dans le match
+        elif choice == "Q":
+            self.back_to_menu()
+        else:
+            self.menu_view.input_error()
+            self.input_scores()
+
+    def input_scores(self):
+        """Score input"""
+        self.get_result_option()
+        choice = input()
+        return choice
+
+    @staticmethod
+    def back_to_menu():
+        from controllers.menu import MainController
+        MainController.main_menu()
+
+    #       def round_header(t, start_time):
+    #    """Display tournament info as a round header
+#
+    #    @param t: current tournament
+    #    @param start_time: tournament start time (str)
+    #    """
+    #    print("\n\n")
+#
+    #    h_1 = f"{t.name.upper()}, {t.location.title()} | Description : {t.description}"
+    #    h_2 = f"Start date and time : {t.start_date} | Time control : {t.time_control}\n"
+    #    h_3 = f"- ROUND {t.current_round}/{t.rounds_total} | {start_time} -"
+#
+    #    print(h_1.center(100, " "))
+    #    print(h_2.center(100, " "))
+    #    print(h_3.center(100, " "))
