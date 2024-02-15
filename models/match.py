@@ -4,5 +4,24 @@ class Match:
         self.player2 = player2
 
     def __str__(self):
-        return f"{self.player1.name} {self.player1.surname}, {self.player1.score},
-        \n{self.player2.name} {self.player2.surname}, {self.player2.score}"
+        return "{},{},{},{},{},{}".format(
+            self.player1.name, 
+            self.player1.surname, 
+            self.player1.score, 
+            self.player2.name, 
+            self.player2.surname, 
+            self.player2.score
+        )
+    def __repr__(self) :
+        return "\n({} {}, {}\n{} {}, {})\n".format(
+            self.player1.name, 
+            self.player1.surname, 
+            self.player1.score, 
+            self.player2.name, 
+            self.player2.surname, 
+            self.player2.score
+        )
+    
+    def as_tuple(self):
+        return (self.player1.name, self.player1.surname, self.player1.score,
+                self.player2.name, self.player2.surname, self.player2.score)

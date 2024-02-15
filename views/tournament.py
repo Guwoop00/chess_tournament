@@ -8,6 +8,7 @@ class TournamentView:
             "start_date": input("Début du tournoi : "),
             "end_date": input("Fin du tournoi : "),
             "description": input("Description : "),
+            "total_rounds": input("Nombre de tours : "),
             "players_in_tournament": [player.__dict__ for player in tournament_players],
         }
         return tournament_data
@@ -16,7 +17,7 @@ class TournamentView:
     def added_to_tournament_input(self, player):
         print(f"{player.name} {player.surname} a été ajouté au tournoi.")
 
-    def player_not_found_input():
+    def player_not_found_input(self):
         print("Joueur non trouvé. Veuillez entrer un identifiant valide.")
 
     def add_more_input(self):
@@ -24,5 +25,8 @@ class TournamentView:
         return add_more
     
     def start_tournament_input(self):
-        start = input("Voulez-vous commencer le tournoi ?")
+        start = input("Voulez-vous commencer le tournoi ? ")
         return start
+    
+    def display_current_round(round_name):
+        print(round_name)

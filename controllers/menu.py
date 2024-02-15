@@ -17,15 +17,9 @@ class MainController:
         all_players = self.player_controller.load_players_from_json("/Users/guwoop/Documents/chess_tournament/data/player_list.json")
         main_menu_options = ["Nouveau tournoi", "Gestion des joueurs", "Quitter le programme"]
         choice = self.menu_view.display_menu("Bienvenue au tournoi d'échecs :", main_menu_options)
-
+        
         if choice == 1:
-            self.player_view.display_player_list(all_players)
-            players_in_tournament = self.tournament_controller.participating_players_list()
-            self.tournament_controller.create_new_tournament(players_in_tournament)
-            start = self.tournament_view.start_tournament_input()
-            if start == "oui":
-                pairs = self.tournament_controller.pairing_players(players_in_tournament)
-                self.tournament_controller.create_matchs(pairs)
+                self.tournament_controller.start_tournament()
             
         elif choice == 2:
             player_menu_options = ["Nouveau joueur", "Afficher les joueurs", "Retour au menu principal"]
@@ -39,7 +33,7 @@ class MainController:
                 self.main_menu()
             else:
                 self.main_menu()
-
+    
         elif choice == 3:
             exit()
 
