@@ -1,15 +1,17 @@
 from datetime import datetime
 
 class Round:
-    def __init__(self, name, matchs, start_time = datetime.now().strftime(f"à %H:%M:%S le %d-%m-%Y"), end_time=None):
+    def __init__(self, name, matches, end_time = None):
         self.name = name
-        self.start_time = start_time
+        self.matches = matches
         self.end_time = end_time
-        self.matchs = matchs
+        self.start_time = datetime.now().strftime(f"%H:%M:%S le %d-%m-%Y")
 
     def __str__(self):
         if self.end_time is None:
-            return f"{self.name},{self.start_time}. {self.matchs}"
+            return f"{self.name},{self.start_time}. {self.matches}"
+        else:
+            return f"{self.name}, {self.start_time} au {self.end_time}. {self.matches}"
 
     def to_json(self):
         turn = {

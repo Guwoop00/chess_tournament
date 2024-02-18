@@ -19,7 +19,8 @@ class MainController:
         choice = self.menu_view.display_menu("Bienvenue au tournoi d'échecs :", main_menu_options)
         
         if choice == 1:
-                self.tournament_controller.start_tournament()
+                self.player_view.display_player_list(all_players)
+                self.tournament_controller.launch_tournament()
             
         elif choice == 2:
             player_menu_options = ["Nouveau joueur", "Afficher les joueurs", "Retour au menu principal"]
