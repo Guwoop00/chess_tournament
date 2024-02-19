@@ -1,7 +1,7 @@
 from datetime import datetime
 
 class Tournament:
-    def __init__(self, name, place, end_date, description, players_in_tournament, start_date=datetime.now().strftime(f"à %H:%M:%S le %d-%m-%Y"), total_rounds=4):
+    def __init__(self, name, place, description, players_in_tournament, start_date=datetime.now().strftime(f"à %H:%M:%S le %d-%m-%Y"), end_date=None, total_rounds=4):
         self.name = name
         self.place = place
         self.start_date = start_date
@@ -17,7 +17,7 @@ class Tournament:
     def __repr__(self):
         return f"{self.name}, du {self.start_date} au {self.end_date}"
     
-    def to_dict(self):
+    def to_json(self):
         return {
             'name': self.name,
             'place': self.place,

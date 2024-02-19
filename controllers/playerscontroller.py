@@ -7,19 +7,25 @@ class PlayerController:
         self.player_view = PlayerView()
     
     def create_new_player(self):
-        chess_id = self.player_view.chess_id_input()
-        file_path = "/Users/guwoop/Documents/chess_tournament/data/player_list.json"
-        existing_players = self.load_players_from_json(file_path)
-        
-        if self.player_exists(chess_id, existing_players):
-            self.player_view.player_exists_output()
-            return
-        
-        new_player_data = self.player_view.input_player_data(chess_id)
-        existing_players.append(new_player_data)
 
-        self.save_players_to_json(existing_players, file_path)
-        self.player_view.player_created()
+        while True:
+
+            chess_id = self.player_view.chess_id_input()
+            file_path = "/Users/guwoop/Documents/chess_tournament/data/player_list.json"
+            existing_players = self.load_players_from_json(file_path)
+            
+            if self.player_exists(chess_id, existing_players):
+                self.player_view.player_exists_output()
+                return
+            
+            new_player_data = self.player_view.input_player_data(chess_id)
+            existing_players.append(new_player_data)
+
+            self.save_players_to_json(existing_players, file_path)
+            self.player_view.player_created()
+
+            if not self.player_view.ask_to_add_another_player():
+                break
 
     def player_exists(self, chess_id, players):
         return any(player["chess_id"] == chess_id for player in players)
@@ -38,7 +44,7 @@ class PlayerController:
 
     def save_players_to_json(self, all_players, file_path):
         with open(file_path, "w") as json_file:
-            json.dump(all_players, json_file)
+            json.dump(all_players, json_file, indent=4)
 
 
 if __name__ == "__main__":

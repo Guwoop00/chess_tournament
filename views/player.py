@@ -33,3 +33,13 @@ class PlayerView:
         sorted_players = sorted(all_players, key=lambda player: (player['surname'], player['name'], player['chess_id']))
         for player in sorted_players:
             print(f"\nNom: {player['name']}\nPrénom: {player['surname']}\nIdentifiant d'échecs: {player['chess_id']}\nDate de naissance: {player['date_of_birth']}\nScore: {player['score']}\n")
+    
+    def add_players(self):
+        while True:
+            if not self.ask_to_add_another_player():
+                break
+
+    @staticmethod
+    def ask_to_add_another_player():
+        print("Voulez-vous ajouter un autre joueur ?")
+        return input("Oui/Non : ").lower() == "oui"

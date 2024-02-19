@@ -20,3 +20,4 @@ class MenuViews:
    
     def input_error(self):
         print("Input error, entrez une option valide ! ")
+    

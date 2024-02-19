@@ -6,17 +6,19 @@ class TournamentView:
         tournament_data = {
             "name": input("Nom du tournoi : "),
             "place": input("Lieu du tournoi : "),
-            "description": input("Description : "),
             "players_in_tournament": [player.__dict__ for player in tournament_players],
         }
-        while True:
-            total_rounds = input("Nombre de tours : ")
-            if total_rounds.isdigit():
-                tournament_data["total_rounds"] = int(total_rounds)
-                break
-            else:
-                print("Veuillez entrer un nombre entier.")
-
+        default_rounds = input("Nombre de tour recommandés 4 ? Oui/Non : ")
+        if default_rounds.lower() == "oui":
+            tournament_data["total_rounds"] = 4
+        else:
+            while True:
+                total_rounds = input("Nombre de tours : ")
+                if total_rounds.isdigit():
+                    tournament_data["total_rounds"] = int(total_rounds)
+                    break
+                else:
+                    print("Veuillez entrer un nombre entier.")        
         return tournament_data
     
     def get_result_option(self, match):

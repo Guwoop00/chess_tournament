@@ -19,8 +19,8 @@ class TournamentController:
 
     def launch_tournament(self):
         players_in_tournament = self.participating_players_list()
-        tournament_data = self.create_new_tournament(players_in_tournament)
-        total_rounds = int(tournament_data['total_rounds'])
+        new_tournament_data = self.create_new_tournament(players_in_tournament)
+        total_rounds = int(new_tournament_data['total_rounds'])
 
         for current_round in range(1, total_rounds + 1):
             if current_round == 1:
@@ -70,17 +70,12 @@ class TournamentController:
         return pairs
 
     def create_new_tournament(self, players_in_tournament):
-        tournament_data = self.tournament_view.input_tournament_data(players_in_tournament)
-        tournament_class = Tournament(
-            tournament_data['name'],
-            tournament_data['place'],
-            datetime.now().strftime(f"à %H:%M:%S le %d-%m-%Y"),
-            tournament_data['description'],
-            players_in_tournament,
-            tournament_data['total_rounds']
-        )
-        self.save_tournament_to_json(tournament_data)
-        return tournament_data
+        file_path = "/Users/guwoop/Documents/chess_tournament/data/tournament_list.json"
+        all_tournaments = self.load_tournament_from_json(file_path)            
+        new_tournament_data = self.tournament_view.input_tournament_data(players_in_tournament)
+        all_tournaments.append(new_tournament_data)
+        self.save_tournament_to_json(all_tournaments, file_path)
+        return new_tournament_data
                 
     def participating_players_list(self):
         existing_players = self.player_controller.load_players_from_json(file_path="/Users/guwoop/Documents/chess_tournament/data/player_list.json")
@@ -111,30 +106,28 @@ class TournamentController:
 
             add_more = self.tournament_view.add_more_input()
             if add_more.lower() != "oui":
-                break
+                if self.verify_pair_players(players_in_tournament):
+                    break
+                else:
+                    print("Le nombre de joueur doit etre pair. Ajoutez un autre joueur.")
 
         return players_in_tournament
     
-    def save_tournament_to_json(self, tournament_data):
-        with open("data/tournament_list.json", "a") as json_file:
-            json.dump(tournament_data, json_file)
-            json_file.write('\n')
+    def save_tournament_to_json(self, all_tournaments, file_path):
+        with open(file_path, "w") as json_file:
+            json.dump(all_tournaments, json_file, indent=4)
 
-    def load_tournaments_from_json(self, file_path):
+    def load_tournament_from_json(self, file_path):
         all_tournaments = []
-        with open(file_path, "r") as json_file:
-            for line in json_file:
-                tournament_data = json.loads(line)              
-                tournament = self.create_new_tournament(
-                    tournament_data['name'],
-                    tournament_data['place'],
-                    tournament_data['start_date'],
-                    tournament_data['end_date'],
-                    tournament_data['description'],
-                    tournament_data['players_list'],
-                    tournament_data['total_rounds']                    
-                )                
-                all_tournaments.append(tournament)
+        try:
+            with open(file_path, "r") as json_file:
+                tournament_data_list = json.load(json_file)
+                for tournament_data in tournament_data_list:
+                    tournament = Tournament(**tournament_data)
+                    all_tournaments.append(tournament.to_json())
+        except json.decoder.JSONDecodeError:
+            self.player_view.empty_json_print()
+        return all_tournaments
 
     def create_matches(self, pairs):
         """
@@ -169,8 +162,6 @@ class TournamentController:
         else:
             self.menu_view.input_error()
             self.input_scores()
-
-    @staticmethod
-    def back_to_menu():
-        from controllers.menu import MainController
-        MainController.main_menu()
+    
+    def verify_pair_players(self, players_in_tournament):
+        return len(players_in_tournament) % 2 == 0
