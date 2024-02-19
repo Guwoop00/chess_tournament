@@ -14,14 +14,11 @@ class Round:
             return f"{self.name}, {self.start_time} au {self.end_time}. {self.matches}"
 
     def to_json(self):
-        turn = {
+        round = {
             "name": self.name,
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "matches": []
+            "matches": self.matches
         }
-        for match in self.matches:
-            turn['matches'].append(match.to_json())
-
-        return turn
+        return round
     

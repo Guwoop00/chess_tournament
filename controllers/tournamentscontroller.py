@@ -22,11 +22,15 @@ class TournamentController:
         new_tournament_data = self.create_new_tournament(players_in_tournament)
         total_rounds = int(new_tournament_data['total_rounds'])
 
+        # Initialize rounds as an empty list
+        new_tournament_data["rounds"] = []
+
         for current_round in range(1, total_rounds + 1):
             if current_round == 1:
                 pairs = self.pair_players_randomly(players_in_tournament)
             else:
                 pairs = self.pair_players_by_tournament_score(players_in_tournament, matches)
+
             matches = self.create_matches(pairs)
             round_name = Round(f"Round {current_round}/{total_rounds}", matches, end_time = None)
             print(round_name)
@@ -34,7 +38,26 @@ class TournamentController:
                 choice = self.tournament_view.get_result_option(match)
                 self.update_players_score(match, choice, players_in_tournament)
             round_name.end_time = self.tournament_view.finish_round()
-            print(matches)       
+            print(matches)
+
+            # Convert the round to JSON and add it to the tournament data
+            new_tournament_data["rounds"].append(round_name.to_json())
+
+            # Load all tournaments from the JSON file
+            all_tournaments = self.load_tournament_from_json('/Users/guwoop/Documents/chess_tournament/data/tournament_list.json')
+
+            # Check if the tournament already exists in the list of tournaments
+            for i, tournament in enumerate(all_tournaments):
+                if tournament['name'] == new_tournament_data['name']:
+                    # If the tournament exists, update its data
+                    all_tournaments[i] = new_tournament_data
+                    break
+            else:
+                # If the tournament does not exist, add it to the list of tournaments
+                all_tournaments.append(new_tournament_data)
+
+            # Save the updated list of all tournaments to the JSON file
+            self.save_tournament_to_json(all_tournaments, '/Users/guwoop/Documents/chess_tournament/data/tournament_list.json')
 
     def pair_players_randomly(self, players_in_tournament):
         number_of_matches_to_play = math.floor(len(players_in_tournament) / 2)

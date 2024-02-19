@@ -1,25 +1,26 @@
 from datetime import datetime
-class TournamentView:
 
+class TournamentView:
     @classmethod
     def input_tournament_data(cls, tournament_players):        
-        tournament_data = {
+        new_tournament_data = {
             "name": input("Nom du tournoi : "),
             "place": input("Lieu du tournoi : "),
+            "description": input("Description : "),
             "players_in_tournament": [player.__dict__ for player in tournament_players],
         }
         default_rounds = input("Nombre de tour recommandés 4 ? Oui/Non : ")
         if default_rounds.lower() == "oui":
-            tournament_data["total_rounds"] = 4
+            new_tournament_data["total_rounds"] = 4
         else:
             while True:
                 total_rounds = input("Nombre de tours : ")
                 if total_rounds.isdigit():
-                    tournament_data["total_rounds"] = int(total_rounds)
+                    new_tournament_data["total_rounds"] = int(total_rounds)
                     break
                 else:
                     print("Veuillez entrer un nombre entier.")        
-        return tournament_data
+        return new_tournament_data
     
     def get_result_option(self, match):
         valid_choices = ['1', 'N', '2', 'Q']

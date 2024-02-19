@@ -1,7 +1,7 @@
 from datetime import datetime
 
 class Tournament:
-    def __init__(self, name, place, description, players_in_tournament, start_date=datetime.now().strftime(f"à %H:%M:%S le %d-%m-%Y"), end_date=None, total_rounds=4):
+    def __init__(self, name, place, description, players_in_tournament, start_date=datetime.now().strftime(f"à %H:%M:%S le %d-%m-%Y"), end_date=None, total_rounds=4, rounds = []):
         self.name = name
         self.place = place
         self.start_date = start_date
@@ -9,6 +9,7 @@ class Tournament:
         self.description = description        
         self.players_in_tournament = players_in_tournament
         self.total_rounds = total_rounds
+        self.rounds = rounds
 
 
     def __str__(self):
@@ -25,5 +26,6 @@ class Tournament:
             'end_date': self.end_date,
             'description': self.description,
             'players_in_tournament': self.players_in_tournament,
-            'total_rounds': self.total_rounds
+            'total_rounds': self.total_rounds,
+            'rounds': self.rounds
         }
