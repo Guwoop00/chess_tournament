@@ -5,5 +5,5 @@ MarkupSafe==2.1.2
 mccabe==0.7.0
 pycodestyle==2.10.0
 pyflakes==3.0.1
-Pygments==2.14.0
+Pygments==2.15.0
 virtualenv==20.24.5
