@@ -6,7 +6,6 @@ from controllers.playerscontroller import PlayerController
 
 
 class MainController:
-
     def __init__(self):
         self.menu_view = MenuViews()
         self.tournament_controller = TournamentController()
@@ -15,21 +14,20 @@ class MainController:
         self.tournament_view = TournamentView()
 
     def main_menu(self):
+        """
+        Main menu of the program
+        """
         all_players = self.player_controller.load_players_from_json(
-            "/Users/guwoop/Documents/chess_tournament/data/player_list.json"
-        )
+            "data/player_list.json")
         all_tournaments = self.tournament_controller.load_tournament_from_json(
-         "/Users/guwoop/Documents/chess_tournament/data/tournament_list.json"
-        )
+         "data/tournament_list.json")
         main_menu_options = [
             "Gestion des tournois",
             "Gestion des joueurs",
             "Quitter le programme"
         ]
         choice = self.menu_view.display_menu(
-            "Bienvenue au tournoi d'échecs :",
-            main_menu_options
-        )
+            "Bienvenue au tournoi d'échecs :", main_menu_options)
 
         if choice == 1:  # Gestion des tournois
             tournament_menu_options = [
@@ -39,8 +37,8 @@ class MainController:
                 "Retour au menu principal"
             ]
             tournament_sub_choice = self.menu_view.display_menu(
-                "Bienvenue au tournoi d'échecs :", tournament_menu_options
-            )
+                "Bienvenue au tournoi d'échecs :",
+                tournament_menu_options)
 
             if tournament_sub_choice == 1:
                 self.player_view.display_player_list(all_players)
@@ -50,9 +48,7 @@ class MainController:
                 self.tournament_view.display_tournament_list(all_tournaments)
             elif tournament_sub_choice == 3:
                 self.tournament_controller.load_most_recent_tournament(
-                    "/Users/guwoop/Documents/chess_tournament/data/"
-                    "tournament_list.json"
-                )
+                    "data/tournament_list.json")
             elif tournament_sub_choice == 4:
                 self.main_menu()
             else:
@@ -65,8 +61,8 @@ class MainController:
                 "Retour au menu principal"
             ]
             player_sub_choice = self.menu_view.display_menu(
-                "Bienvenue au tournoi d'échecs :", player_menu_options
-            )
+                "Bienvenue au tournoi d'échecs :",
+                player_menu_options)
 
             if player_sub_choice == 1:
                 self.player_controller.create_new_player()

@@ -2,6 +2,17 @@ class PlayerView:
 
     @classmethod
     def input_player_data(cls, chess_id):
+        """
+        Collects data of a player.
+
+        Args:
+            chess_id (str): Chess ID of the player.
+
+        Returns:
+            dict: Player data including name, surname,
+            date of birth, and chess ID.
+
+        """
         return {
             "name": input("Prénom du joueur : "),
             "surname": input("Nom du joueur : "),
@@ -29,6 +40,13 @@ class PlayerView:
     @staticmethod
     # Affiche la liste des joueurs triée par nom
     def display_player_list(all_players):
+        """
+        Displays the list of players sorted by name.
+
+        Args:
+            all_players (list): List of player dictionaries.
+
+        """
         sorted_players = sorted(all_players, key=lambda player:
                                 (player['surname'], player['name'],
                                  player['chess_id']))
@@ -40,6 +58,9 @@ class PlayerView:
                   f"\nScore: {player['score']}\n")
 
     def add_players(self):
+        """
+        Allows adding another player.
+        """
         while True:
             if not self.ask_to_add_another_player():
                 break

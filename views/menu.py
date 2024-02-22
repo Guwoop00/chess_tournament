@@ -2,6 +2,16 @@ class MenuViews:
 
     @classmethod
     def display_menu(cls, title, options):
+        """
+        Display menus.
+
+        Args:
+            title (str): The title of the menu.
+            options (list of str): List of menu options.
+
+        Returns:
+            int: User choice.
+        """
         print()
         print(title)
         print("********************")
