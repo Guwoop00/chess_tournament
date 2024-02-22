@@ -183,14 +183,31 @@ class TournamentController:
 
     def pair_by_tournament_score(self, players_in_tournament):
         """
-        Form pairs of players based on their scores and previous opponents.
+   Pair players for a tournament based on their scores.
 
-        Args:
-            players_in_tournament (list):
-            List of players participating in the tournament.
+    Args:
+        players_in_tournament (list):
+        A list of dictionaries representing players
+            in the tournament.
+        Each dictionary should contain at least a "score"
+            key representing the player's score.
 
-        Returns:
-            list: List of player pairs.
+    Returns:
+        list: A list of pairs, where each pair
+        consists of two players. The pairs
+            are determined based on the players'
+            scores, with higher-scoring players
+            being paired together where possible.
+
+    Note:
+        The function sorts players by their scores
+        in descending order before
+        pairing them. If there are multiple pairs
+        that can be formed with the
+        same two players, the function selects the
+        pair that has not been formed
+        previously.
+
         """
         number_of_matches_to_play = math.floor(len(players_in_tournament) / 2)
         players_available = players_in_tournament.copy()
@@ -198,14 +215,15 @@ class TournamentController:
                                    key=lambda player: player["score"],
                                    reverse=True)
         pairs = []
-        for i in range(number_of_matches_to_play):
+        while len(pairs) < number_of_matches_to_play and len(players_available
+                                                             ) >= 2:
             player1 = players_available.pop(0)
             perfect_match = None
             for player2 in players_available:
-                if not any((player1, player2) in pair or (player2, player1)
-                           in pair for pair in pairs):
-                    perfect_match = players_available.pop(
-                        players_available.index(player2))
+                if not any((player1, player2) in pair
+                           or (player2, player1) in pair for pair in pairs):
+                    perfect_match = player2
+                    players_available.remove(player2)
                     break
             if perfect_match:
                 pair = [player1, perfect_match]
