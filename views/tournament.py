@@ -20,18 +20,17 @@ class TournamentView:
             "description": input("Description : "),
             "players_in_tournament": [player for player in tournament_players],
         }
-        default_rounds = input("Nombre de tour recommandés 4 ? Oui/Non : ")
-        if default_rounds.lower() == "oui":
+        number_of_rounds = input("Nombre de tour recommandés [4] ? : ")
+        if number_of_rounds.strip() == "":
             new_tournament_data["total_rounds"] = 4
         else:
             while True:
-                total_rounds = input("Nombre de tours : ")
-
-                if total_rounds.isdigit():
-                    new_tournament_data["total_rounds"] = int(total_rounds)
-                    break
+                if number_of_rounds.isdigit():
+                    break  # Quitter la boucle si un entier valide est saisi
                 else:
                     print("Veuillez entrer un nombre entier.")
+                    number_of_rounds = input("Nombre de tour choisi ? : ")
+                new_tournament_data["total_rounds"] = int(number_of_rounds)
         return new_tournament_data
 
     def get_result_option(self, match):
@@ -48,6 +47,7 @@ class TournamentView:
             print('[2] Player 2 wins')
             print('**************')
             print("[Q] Back to main menu ?")
+            print('**************')
             choice = input("Qui est le vainqueur  ? ")
             if choice in valid_choices:
                 return choice

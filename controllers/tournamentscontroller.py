@@ -11,6 +11,8 @@ from models.tournament import Tournament
 
 class TournamentController:
 
+    pairs_history = []
+
     def __init__(self):
         """Initializes the TournamentController."""
         self.player_view = PlayerView()
@@ -52,6 +54,8 @@ class TournamentController:
             self.update_tournament_data(new_tournament_data, current_round,
                                         total_rounds, round_name, matches,
                                         all_tournaments)
+        resume = self.tournament_view.display_tournament_list(all_tournaments)
+        print(resume)
 
     def verify_if_rounds_exist(self, new_tournament_data):
         """
@@ -103,8 +107,8 @@ class TournamentController:
         else:
             pairs = self.pair_by_tournament_score(players_in_tournament)
         matches = self.create_matches(pairs)
-        round_name = Round(f"Round {current_round}/{total_rounds}",
-                           f"{matches}")
+        round_name = Round(f"Round {current_round}/{total_rounds}")
+        print()
         print(round_name)
         return round_name, matches
 
@@ -174,11 +178,14 @@ class TournamentController:
         players_available = players_in_tournament.copy()
         pairs = []
         random.shuffle(players_available)
-        for i in range(number_of_matches_to_play):
+        for _ in range(number_of_matches_to_play):
             player1 = players_available.pop()
             player2 = players_available.pop()
             pair = (player1, player2)
+            pair_history = (player1["chess_id"], player2["chess_id"])
             pairs.append(pair)
+            self.pairs_history.append(pair_history)
+        print(self.pairs_history)
         return pairs
 
     def pair_by_tournament_score(self, players_in_tournament):
@@ -209,28 +216,33 @@ class TournamentController:
         previously.
 
         """
+        pairs = []
         number_of_matches_to_play = math.floor(len(players_in_tournament) / 2)
         players_available = players_in_tournament.copy()
-        players_available = sorted(players_available,
-                                   key=lambda player: player["score"],
-                                   reverse=True)
-        pairs = []
-        while len(pairs) < number_of_matches_to_play and len(players_available
-                                                             ) >= 2:
+        players_available = sorted(players_available, key=lambda
+                                   player: player["score"], reverse=True)
+
+        for _ in range(number_of_matches_to_play):
             player1 = players_available.pop(0)
             perfect_match = None
             for player2 in players_available:
-                if not any((player1, player2) in pair
-                           or (player2, player1) in pair for pair in pairs):
+                if ((player1["chess_id"], player2["chess_id"])
+                    not in self.pairs_history and
+                   (player2["chess_id"], player1["chess_id"])
+                   not in self.pairs_history):
                     perfect_match = player2
-                    players_available.remove(player2)
                     break
             if perfect_match:
                 pair = [player1, perfect_match]
+                pairs.append(pair)
+                self.pairs_history.append((player1["chess_id"],
+                                           perfect_match["chess_id"]))
             else:
                 player2 = players_available.pop(0)
                 pair = [player1, player2]
-            pairs.append(pair)
+                pairs.append(pair)
+                self.pairs_history.append((player1["chess_id"],
+                                           player2["chess_id"]))
         return pairs
 
     def create_new_tournament(self, players_in_tournament):
