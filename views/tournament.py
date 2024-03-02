@@ -120,9 +120,41 @@ class TournamentView:
                 print(f"Round: {round['name']}")
                 print(f"Start time: {round['start_time']}")
                 print(f"End time: {round['end_time']}")
-                matches = round['matches'].strip("[]")
-                matches_presentation = matches.replace("), (", "),\n(")
-                print(f"\nMatches: \n{matches_presentation}")
+                matches = round['matches']
+                print(f"\nMatches: \n{matches}")
+
+    @staticmethod
+    def display_tournament_resume(new_tournament_json):
+        players_in_tournaments = new_tournament_json['players_in_tournament']
+        sorted_players_in_tournaments = sorted(players_in_tournaments,
+                                               key=lambda player:
+                                               (player['surname']))
+        if new_tournament_json['end_date']:
+            print(f"\nNom: {new_tournament_json['name']}"
+                  f"\nLieu: {new_tournament_json['place']}"
+                  f"\nDate de début: {new_tournament_json['start_date']} "
+                  f"Date de fin: {new_tournament_json['end_date']}"
+                  f"\nTours effectués: {new_tournament_json['total_rounds']}"
+                  f"\nDescription: {new_tournament_json['description']}\n"
+                  f"\nListe des participants: ")
+            for player in sorted_players_in_tournaments:
+                print(f"{player["surname"]}, "
+                      f" {player["name"]}")
+        else:
+            print(f"\nNom: {new_tournament_json['name']}"
+                  f"\nLieu: {new_tournament_json['place']}"
+                  f"\nDate de début: {new_tournament_json['start_date']}"
+                  f"\nDate de fin: En cours"
+                  f"\nTours effectués: {new_tournament_json['total_rounds']}"
+                  f"\nDescription: {new_tournament_json['description']}\n")
+        for round in new_tournament_json['rounds']:
+            print()
+            print(f"Round: {round['name']}")
+            print(f"Start time: {round['start_time']}")
+            print(f"End time: {round['end_time']}")
+            matches = round['matches']
+            print(f"\nMatches: \n{matches}")
+        return ""
 
     @staticmethod
     def no_unfinished_tournament():

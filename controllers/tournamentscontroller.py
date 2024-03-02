@@ -51,10 +51,11 @@ class TournamentController:
             self.ask_for_match_result(matches, players_in_tournament)
             all_tournaments = self.load_tournament_from_json(
                 'data/tournament_list.json')
-            self.update_tournament_data(new_tournament_data, current_round,
-                                        total_rounds, round_name, matches,
-                                        all_tournaments)
-        resume = self.tournament_view.display_tournament_list(all_tournaments)
+            new_tournament_json = self.update_tournament_data(
+                new_tournament_data, current_round,
+                total_rounds, round_name, matches, all_tournaments)
+        resume = self.tournament_view.display_tournament_resume(
+            new_tournament_json)
         print(resume)
 
     def verify_if_rounds_exist(self, new_tournament_data):
@@ -107,7 +108,7 @@ class TournamentController:
         else:
             pairs = self.pair_by_tournament_score(players_in_tournament)
         matches = self.create_matches(pairs)
-        round_name = Round(f"Round {current_round}/{total_rounds}")
+        round_name = Round(f"Round {current_round}/{total_rounds}", matches)
         print()
         print(round_name)
         return round_name, matches
@@ -162,6 +163,7 @@ class TournamentController:
             all_tournaments.append(new_tournament_json)
         self.save_tournament_to_json(all_tournaments,
                                      'data/tournament_list.json')
+        return new_tournament_json
 
     def pair_players_randomly(self, players_in_tournament):
         """
@@ -185,7 +187,6 @@ class TournamentController:
             pair_history = (player1["chess_id"], player2["chess_id"])
             pairs.append(pair)
             self.pairs_history.append(pair_history)
-        print(self.pairs_history)
         return pairs
 
     def pair_by_tournament_score(self, players_in_tournament):
@@ -221,7 +222,6 @@ class TournamentController:
         players_available = players_in_tournament.copy()
         players_available = sorted(players_available, key=lambda
                                    player: player["score"], reverse=True)
-
         for _ in range(number_of_matches_to_play):
             player1 = players_available.pop(0)
             perfect_match = None
@@ -231,8 +231,10 @@ class TournamentController:
                    (player2["chess_id"], player1["chess_id"])
                    not in self.pairs_history):
                     perfect_match = player2
+                    players_available.remove(player2)
                     break
             if perfect_match:
+                perfect_match = player2
                 pair = [player1, perfect_match]
                 pairs.append(pair)
                 self.pairs_history.append((player1["chess_id"],
@@ -333,7 +335,6 @@ class TournamentController:
                     **most_recent_tournament).to_json()
                 players_in_tournament = new_tournament_data[
                     'players_in_tournament']
-                print(new_tournament_data)
                 self.run_tournament(new_tournament_data, players_in_tournament)
             else:
                 self.tournament_view.no_unfinished_tournament()
