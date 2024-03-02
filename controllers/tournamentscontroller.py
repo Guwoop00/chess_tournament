@@ -11,8 +11,6 @@ from models.tournament import Tournament
 
 class TournamentController:
 
-    pairs_history = []
-
     def __init__(self):
         """Initializes the TournamentController."""
         self.player_view = PlayerView()
@@ -43,17 +41,18 @@ class TournamentController:
         total_rounds = int(new_tournament_data['total_rounds'])
         self.verify_if_rounds_exist(new_tournament_data)
         initial_round = self.verify_if_current_round_exist(new_tournament_data)
+        pairs_history = self.verify_if_pairs_history_exist(new_tournament_data)
         for current_round in range(initial_round, total_rounds + 1):
             round_name, matches = self.run_rounds(new_tournament_data,
                                                   current_round, total_rounds,
-                                                  players_in_tournament)
+                                                  players_in_tournament, pairs_history)
             self.save_rounds_to_json()
             self.ask_for_match_result(matches, players_in_tournament)
             all_tournaments = self.load_tournament_from_json(
                 'data/tournament_list.json')
             new_tournament_json = self.update_tournament_data(
                 new_tournament_data, current_round,
-                total_rounds, round_name, matches, all_tournaments)
+                total_rounds, round_name, matches, all_tournaments, pairs_history)
         resume = self.tournament_view.display_tournament_resume(
             new_tournament_json)
         print(resume)
@@ -87,9 +86,25 @@ class TournamentController:
         else:
             initial_round = 1
         return initial_round
+    
+    def verify_if_pairs_history_exist(self, new_tournament_data):
+        """
+        Verifies if the pairs history exists in the tournament data.
+
+        Args:
+            new_tournament_data (dict): The data of the new tournament.
+
+        Returns:
+            A list of pairs history.
+        """
+        if "pairs_history" in new_tournament_data:
+            pairs_history = new_tournament_data["pairs_history"]
+        else:
+            pairs_history = []
+        return pairs_history
 
     def run_rounds(self, new_tournament_data, current_round,
-                   total_rounds, players_in_tournament):
+                   total_rounds, players_in_tournament, pairs_history):
         """
         Runs rounds for the tournament.
 
@@ -104,9 +119,9 @@ class TournamentController:
         """
         new_tournament_data["current_round"] = current_round
         if current_round == 1:
-            pairs = self.pair_players_randomly(players_in_tournament)
+            pairs = self.pair_players_randomly(players_in_tournament, pairs_history)
         else:
-            pairs = self.pair_by_tournament_score(players_in_tournament)
+            pairs = self.pair_by_tournament_score(players_in_tournament, pairs_history)
         matches = self.create_matches(pairs)
         round_name = Round(f"Round {current_round}/{total_rounds}", matches)
         print()
@@ -137,7 +152,7 @@ class TournamentController:
 
     def update_tournament_data(self, new_tournament_data, current_round,
                                total_rounds, round_name,
-                               matches, all_tournaments):
+                               matches, all_tournaments, pairs_history):
         """
         Update tournament data after a round.
 
@@ -154,6 +169,7 @@ class TournamentController:
             new_tournament_data["end_date"] = round_name.end_time
         print(matches)
         new_tournament_data["rounds"].append(round_name.to_json())
+        new_tournament_data["pairs_history"] = pairs_history
         new_tournament_json = Tournament(**new_tournament_data).to_json()
         for i, tournament in enumerate(all_tournaments):
             if tournament['name'] == new_tournament_data['name']:
@@ -165,7 +181,7 @@ class TournamentController:
                                      'data/tournament_list.json')
         return new_tournament_json
 
-    def pair_players_randomly(self, players_in_tournament):
+    def pair_players_randomly(self, players_in_tournament, pairs_history):
         """
         Form pairs of players randomly.
 
@@ -186,10 +202,10 @@ class TournamentController:
             pair = (player1, player2)
             pair_history = (player1["chess_id"], player2["chess_id"])
             pairs.append(pair)
-            self.pairs_history.append(pair_history)
+            pairs_history.append(pair_history)
         return pairs
 
-    def pair_by_tournament_score(self, players_in_tournament):
+    def pair_by_tournament_score(self, players_in_tournament, pairs_history):
         """
    Pair players for a tournament based on their scores.
 
@@ -227,9 +243,9 @@ class TournamentController:
             perfect_match = None
             for player2 in players_available:
                 if ((player1["chess_id"], player2["chess_id"])
-                    not in self.pairs_history and
+                    not in pairs_history and
                    (player2["chess_id"], player1["chess_id"])
-                   not in self.pairs_history):
+                   not in pairs_history):
                     perfect_match = player2
                     players_available.remove(player2)
                     break
@@ -237,14 +253,12 @@ class TournamentController:
                 perfect_match = player2
                 pair = [player1, perfect_match]
                 pairs.append(pair)
-                self.pairs_history.append((player1["chess_id"],
-                                           perfect_match["chess_id"]))
+                pairs_history.append((player1["chess_id"],
+                                      perfect_match["chess_id"]))
             else:
                 player2 = players_available.pop(0)
                 pair = [player1, player2]
                 pairs.append(pair)
-                self.pairs_history.append((player1["chess_id"],
-                                           player2["chess_id"]))
         return pairs
 
     def create_new_tournament(self, players_in_tournament):
