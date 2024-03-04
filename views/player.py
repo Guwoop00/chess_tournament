@@ -56,16 +56,3 @@ class PlayerView:
                   f"\nIdentifiant d'échecs: {player['chess_id']}"
                   f"\nDate de naissance: {player['date_of_birth']}"
                   f"\nScore: {player['score']}\n")
-
-    def add_players(self):
-        """
-        Allows adding another player.
-        """
-        while True:
-            if not self.ask_to_add_another_player():
-                break
-
-    @staticmethod
-    def ask_to_add_another_player():
-        print("Voulez-vous ajouter un autre joueur ?")
-        return input("Oui/Non : ").lower() == "oui"

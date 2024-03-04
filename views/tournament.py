@@ -65,7 +65,7 @@ class TournamentView:
         print("Joueur non trouvé. Veuillez entrer un identifiant valide.")
 
     def add_more_input(self):
-        add_more = input("Voulez-vous ajouter un autre joueur (oui/non) : ")
+        add_more = input("Ajouter un autre joueur ? [OK] : ")
         return add_more
 
     def start_tournament_input(self):

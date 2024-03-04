@@ -45,14 +45,16 @@ class TournamentController:
         for current_round in range(initial_round, total_rounds + 1):
             round_name, matches = self.run_rounds(new_tournament_data,
                                                   current_round, total_rounds,
-                                                  players_in_tournament, pairs_history)
+                                                  players_in_tournament,
+                                                  pairs_history)
             self.save_rounds_to_json()
             self.ask_for_match_result(matches, players_in_tournament)
             all_tournaments = self.load_tournament_from_json(
                 'data/tournament_list.json')
             new_tournament_json = self.update_tournament_data(
                 new_tournament_data, current_round,
-                total_rounds, round_name, matches, all_tournaments, pairs_history)
+                total_rounds, round_name, matches, all_tournaments,
+                pairs_history)
         resume = self.tournament_view.display_tournament_resume(
             new_tournament_json)
         print(resume)
@@ -86,7 +88,7 @@ class TournamentController:
         else:
             initial_round = 1
         return initial_round
-    
+
     def verify_if_pairs_history_exist(self, new_tournament_data):
         """
         Verifies if the pairs history exists in the tournament data.
@@ -119,9 +121,11 @@ class TournamentController:
         """
         new_tournament_data["current_round"] = current_round
         if current_round == 1:
-            pairs = self.pair_players_randomly(players_in_tournament, pairs_history)
+            pairs = self.pair_players_randomly(players_in_tournament,
+                                               pairs_history)
         else:
-            pairs = self.pair_by_tournament_score(players_in_tournament, pairs_history)
+            pairs = self.pair_by_tournament_score(players_in_tournament,
+                                                  pairs_history)
         matches = self.create_matches(pairs)
         round_name = Round(f"Round {current_round}/{total_rounds}", matches)
         print()
@@ -310,7 +314,7 @@ class TournamentController:
             if not found_player:
                 self.tournament_view.player_not_found_input()
             add_more = self.tournament_view.add_more_input()
-            if add_more.lower() != "oui":
+            if add_more != "":
                 if self.verify_pair_players(players_in_tournament):
                     break
                 else:
