@@ -10,22 +10,20 @@ class Round:
 
     def __str__(self):
         if self.end_time is None:
-            return f"{self.name}, {self.start_time}. {self.matches}"
+            return f"{self.name}, démarré à {self.start_time}. Matches: {self.matches}"
         else:
-            return f"{self.name}, {self.start_time} au {self.end_time}." \
-                   f" {self.matches}"
+            return f"{self.name}, démarré à {self.start_time}, terminé à {self.end_time}. Matches: {self.matches}"
 
     def to_json(self):
         """
         Convert round data to a dictionary.
 
         Returns:
-        dict: Dictionary containing round data.
+            dict: Dictionary containing round data.
         """
-        round = {
+        return {
             "name": self.name,
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "matches": self.matches
+            "matches": self.matches,
         }
-        return round

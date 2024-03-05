@@ -26,8 +26,10 @@ class MenuViews:
                 if 1 <= choice <= len(options):
                     return choice
                 else:
-                    print("Choix invalide. Merci d'entrer un nombre"
-                          "entre 1 et ", len(options))
+                    print(
+                        "Choix invalide. Merci d'entrer un nombre" "entre 1 et ",
+                        len(options),
+                    )
             except ValueError:
                 print("Choix invalide. Merci de rentrer un nombre valide.")
 
@@ -55,7 +57,7 @@ class MenuViews:
             "Gestion des tournois",
             "Gestion des joueurs",
             "Rapports",
-            "Quitter le programme"
+            "Quitter le programme",
         ]
 
     @staticmethod
@@ -63,20 +65,17 @@ class MenuViews:
         return [
             "Nouveau tournoi",
             "Reprendre le dernier tournoi",
-            "Retour au menu principal"
+            "Retour au menu principal",
         ]
 
     @staticmethod
     def players_menu_options():
-        return [
-            "Nouveau joueur",
-            "Retour au menu principal"
-        ]
+        return ["Nouveau joueur", "Retour au menu principal"]
 
     @staticmethod
     def rapports_menu_options():
         return [
             "Afficher les tournois",
             "Afficher les joueurs",
-            "Retour au menu principal"
+            "Retour au menu principal",
         ]

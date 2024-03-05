@@ -47,12 +47,15 @@ class PlayerView:
             all_players (list): List of player dictionaries.
 
         """
-        sorted_players = sorted(all_players, key=lambda player:
-                                (player['surname'], player['name'],
-                                 player['chess_id']))
+        sorted_players = sorted(
+            all_players,
+            key=lambda player: (player["surname"], player["name"], player["chess_id"]),
+        )
         for player in sorted_players:
-            print(f"\nNom: {player['name']}"
-                  f"\nPrénom: {player['surname']}"
-                  f"\nIdentifiant d'échecs: {player['chess_id']}"
-                  f"\nDate de naissance: {player['date_of_birth']}"
-                  f"\nScore: {player['score']}\n")
+            print(
+                f"\nNom: {player['name']}"
+                f"\nPrénom: {player['surname']}"
+                f"\nIdentifiant d'échecs: {player['chess_id']}"
+                f"\nDate de naissance: {player['date_of_birth']}"
+                f"\nScore: {player['score']}\n"
+            )

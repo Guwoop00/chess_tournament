@@ -1,8 +1,10 @@
+from typing import List
+
+from controllers.playerscontroller import PlayerController
+from controllers.tournamentscontroller import TournamentController
 from views.menu import MenuViews
 from views.player import PlayerView
 from views.tournament import TournamentView
-from controllers.tournamentscontroller import TournamentController
-from controllers.playerscontroller import PlayerController
 
 
 class MainController:
@@ -17,36 +19,42 @@ class MainController:
         """
         Main menu of the program
         """
-        all_players = self.player_controller.load_players_from_json(
-            "data/player_list.json")
-        all_tournaments = self.tournament_controller.load_tournament_from_json(
-         "data/tournament_list.json")
-        main_menu_options = self.menu_view.main_menu_options()
-        choice = self.menu_view.display_menu(
-            "Bienvenue au tournoi d'échecs :", main_menu_options)
+        all_players: List[dict] = self.player_controller.load_players_from_json(
+            "data/player_list.json"
+        )
+        all_tournaments: List[dict] = (
+            self.tournament_controller.load_tournament_from_json(
+                "data/tournament_list.json"
+            )
+        )
+        main_menu_options: dict = self.menu_view.main_menu_options()
+        choice: int = self.menu_view.display_menu(
+            "Bienvenue au tournoi d'échecs :", main_menu_options
+        )
 
         if choice == 1:  # Gestion des tournois
-            tournament_menu_options = self.menu_view.tournament_menu_options()
-            tournament_sub_choice = self.menu_view.display_menu(
-                "Gestion des tournois :",
-                tournament_menu_options)
+            tournament_menu_options: dict = self.menu_view.tournament_menu_options()
+            tournament_sub_choice: int = self.menu_view.display_menu(
+                "Gestion des tournois :", tournament_menu_options
+            )
 
             if tournament_sub_choice == 1:
                 self.player_view.display_player_list(all_players)
                 self.tournament_controller.launch_tournament()
             elif tournament_sub_choice == 2:
                 self.tournament_controller.load_most_recent_tournament(
-                    "data/tournament_list.json")
+                    "data/tournament_list.json"
+                )
             elif tournament_sub_choice == 3:
                 self.main_menu()
             else:
                 self.main_menu()
 
         elif choice == 2:  # Gestion des joueurs
-            player_menu_options = self.menu_view.players_menu_options()
-            player_sub_choice = self.menu_view.display_menu(
-                "Gestion des joueurs :",
-                player_menu_options)
+            player_menu_options: dict = self.menu_view.players_menu_options()
+            player_sub_choice: int = self.menu_view.display_menu(
+                "Gestion des joueurs :", player_menu_options
+            )
 
             if player_sub_choice == 1:
                 self.player_controller.create_new_player()
@@ -56,10 +64,10 @@ class MainController:
                 self.main_menu()
 
         elif choice == 3:  # Gestion des rapports
-            rapports_menu_options = self.menu_view.rapports_menu_options()
-            player_sub_choice = self.menu_view.display_menu(
-                "Gestion des rapports :",
-                rapports_menu_options)
+            rapports_menu_options: dict = self.menu_view.rapports_menu_options()
+            player_sub_choice: int = self.menu_view.display_menu(
+                "Gestion des rapports :", rapports_menu_options
+            )
 
             if player_sub_choice == 1:
                 self.menu_view.tournament_list_print()

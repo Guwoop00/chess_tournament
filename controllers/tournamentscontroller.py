@@ -1,12 +1,14 @@
 import json
-import random
 import math
-from views.player import PlayerView
-from views.menu import MenuViews
-from views.tournament import TournamentView
+import random
+from typing import Any, Dict, List, Tuple
+
 from controllers.playerscontroller import PlayerController
 from models.round import Round
 from models.tournament import Tournament
+from views.menu import MenuViews
+from views.player import PlayerView
+from views.tournament import TournamentView
 
 
 class TournamentController:
@@ -18,7 +20,7 @@ class TournamentController:
         self.player_controller = PlayerController()
         self.menu_view = MenuViews()
 
-    def launch_tournament(self):
+    def launch_tournament(self) -> None:
         """
         This function orchestrates the process of launching a new tournament.
         It retrieves the list of participating players
@@ -26,11 +28,17 @@ class TournamentController:
         then runs the tournament using 'run_tournament'
         with the newly created tournament data.
         """
-        players_in_tournament = self.participating_players_list()
-        new_tournament_data = self.create_new_tournament(players_in_tournament)
+        players_in_tournament: List[Dict[str, Any]] = self.participating_players_list()
+        new_tournament_data: Dict[str, Any] = self.create_new_tournament(
+            players_in_tournament
+        )
         self.run_tournament(new_tournament_data, players_in_tournament)
 
-    def run_tournament(self, new_tournament_data, players_in_tournament):
+    def run_tournament(
+        self,
+        new_tournament_data: Dict[str, Any],
+        players_in_tournament: List[Dict[str, Any]],
+    ) -> None:
         """
         Runs a tournament with the given data and players.
 
@@ -38,28 +46,40 @@ class TournamentController:
             new_tournament_data (dict): The data of the new tournament.
             players_in_tournament (list): The list of participating players.
         """
-        total_rounds = int(new_tournament_data['total_rounds'])
+        total_rounds: int = int(new_tournament_data["total_rounds"])
         self.verify_if_rounds_exist(new_tournament_data)
-        initial_round = self.verify_if_current_round_exist(new_tournament_data)
-        pairs_history = self.verify_if_pairs_history_exist(new_tournament_data)
+        initial_round: int = self.verify_if_current_round_exist(new_tournament_data)
+        pairs_history: List[Tuple[str, str]] = self.verify_if_pairs_history_exist(
+            new_tournament_data
+        )
         for current_round in range(initial_round, total_rounds + 1):
-            round_name, matches = self.run_rounds(new_tournament_data,
-                                                  current_round, total_rounds,
-                                                  players_in_tournament,
-                                                  pairs_history)
+            round_name, matches = self.run_rounds(
+                new_tournament_data,
+                current_round,
+                total_rounds,
+                players_in_tournament,
+                pairs_history,
+            )
             self.save_rounds_to_json()
             self.ask_for_match_result(matches, players_in_tournament)
             all_tournaments = self.load_tournament_from_json(
-                'data/tournament_list.json')
+                "data/tournament_list.json"
+            )
             new_tournament_json = self.update_tournament_data(
-                new_tournament_data, current_round,
-                total_rounds, round_name, matches, all_tournaments,
-                pairs_history)
-        resume = self.tournament_view.display_tournament_resume(
-            new_tournament_json)
-        print(resume)
+                new_tournament_data,
+                current_round,
+                total_rounds,
+                round_name,
+                matches,
+                all_tournaments,
+                pairs_history,
+            )
+        resume = self.tournament_view.display_tournament_resume(new_tournament_json)
+        self.tournament_view.display_resume(resume)
 
-    def verify_if_rounds_exist(self, new_tournament_data):
+    def verify_if_rounds_exist(
+        self, new_tournament_data: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """
         Verifies if rounds exist in the tournament data.
 
@@ -73,7 +93,7 @@ class TournamentController:
             new_tournament_data["rounds"] = []
         return new_tournament_data["rounds"]
 
-    def verify_if_current_round_exist(self, new_tournament_data):
+    def verify_if_current_round_exist(self, new_tournament_data: Dict[str, Any]) -> int:
         """
         Verifies if the current round exists in the tournament data.
 
@@ -89,7 +109,9 @@ class TournamentController:
             initial_round = 1
         return initial_round
 
-    def verify_if_pairs_history_exist(self, new_tournament_data):
+    def verify_if_pairs_history_exist(
+        self, new_tournament_data: Dict[str, Any]
+    ) -> List[Tuple[str, str]]:
         """
         Verifies if the pairs history exists in the tournament data.
 
@@ -105,8 +127,14 @@ class TournamentController:
             pairs_history = []
         return pairs_history
 
-    def run_rounds(self, new_tournament_data, current_round,
-                   total_rounds, players_in_tournament, pairs_history):
+    def run_rounds(
+        self,
+        new_tournament_data: Dict[str, Any],
+        current_round: int,
+        total_rounds: int,
+        players_in_tournament: List[Dict[str, Any]],
+        pairs_history: List[Tuple[str, str]],
+    ) -> Tuple[Round, List[Tuple[Dict[str, Any], Dict[str, Any]]]]:
         """
         Runs rounds for the tournament.
 
@@ -121,27 +149,26 @@ class TournamentController:
         """
         new_tournament_data["current_round"] = current_round
         if current_round == 1:
-            pairs = self.pair_players_randomly(players_in_tournament,
-                                               pairs_history)
+            pairs = self.pair_players_randomly(players_in_tournament, pairs_history)
         else:
-            pairs = self.pair_by_tournament_score(players_in_tournament,
-                                                  pairs_history)
+            pairs = self.pair_by_tournament_score(players_in_tournament, pairs_history)
         matches = self.create_matches(pairs)
         round_name = Round(f"Round {current_round}/{total_rounds}", matches)
-        print()
-        print(round_name)
+        self.tournament_view.display_round_name(round_name)
         return round_name, matches
 
-    def save_rounds_to_json(self):
+    def save_rounds_to_json(self) -> None:
         """
         Saves the rounds to a JSON file.
         """
-        all_tournaments = self.load_tournament_from_json(
-         'data/tournament_list.json')
-        self.save_tournament_to_json(all_tournaments,
-                                     'data/tournament_list.json')
+        all_tournaments = self.load_tournament_from_json("data/tournament_list.json")
+        self.save_tournament_to_json(all_tournaments, "data/tournament_list.json")
 
-    def ask_for_match_result(self, matches, players_in_tournament):
+    def ask_for_match_result(
+        self,
+        matches: List[Tuple[Dict[str, Any], Dict[str, Any]]],
+        players_in_tournament: List[Dict[str, Any]],
+    ) -> None:
         """
         Prompt for match results and update players' scores.
 
@@ -154,9 +181,16 @@ class TournamentController:
             choice = self.tournament_view.get_result_option(match)
             self.update_players_score(match, choice, players_in_tournament)
 
-    def update_tournament_data(self, new_tournament_data, current_round,
-                               total_rounds, round_name,
-                               matches, all_tournaments, pairs_history):
+    def update_tournament_data(
+        self,
+        new_tournament_data: Dict[str, Any],
+        current_round: int,
+        total_rounds: int,
+        round_name: Round,
+        matches: List[Tuple[Dict[str, Any], Dict[str, Any]]],
+        all_tournaments: List[Dict[str, Any]],
+        pairs_history: List[Tuple[str, str]],
+    ) -> Dict[str, Any]:
         """
         Update tournament data after a round.
 
@@ -171,21 +205,24 @@ class TournamentController:
         round_name.end_time = self.tournament_view.finish_round()
         if current_round == total_rounds:
             new_tournament_data["end_date"] = round_name.end_time
-        print(matches)
+        self.tournament_view.display_matches(matches)
         new_tournament_data["rounds"].append(round_name.to_json())
         new_tournament_data["pairs_history"] = pairs_history
         new_tournament_json = Tournament(**new_tournament_data).to_json()
         for i, tournament in enumerate(all_tournaments):
-            if tournament['name'] == new_tournament_data['name']:
+            if tournament["name"] == new_tournament_data["name"]:
                 all_tournaments[i] = new_tournament_json
                 break
         else:
             all_tournaments.append(new_tournament_json)
-        self.save_tournament_to_json(all_tournaments,
-                                     'data/tournament_list.json')
+        self.save_tournament_to_json(all_tournaments, "data/tournament_list.json")
         return new_tournament_json
 
-    def pair_players_randomly(self, players_in_tournament, pairs_history):
+    def pair_players_randomly(
+        self,
+        players_in_tournament: List[Dict[str, Any]],
+        pairs_history: List[Tuple[str, str]],
+    ) -> List[Tuple[Dict[str, Any], Dict[str, Any]]]:
         """
         Form pairs of players randomly.
 
@@ -209,47 +246,52 @@ class TournamentController:
             pairs_history.append(pair_history)
         return pairs
 
-    def pair_by_tournament_score(self, players_in_tournament, pairs_history):
+    def pair_by_tournament_score(
+        self,
+        players_in_tournament: List[Dict[str, Any]],
+        pairs_history: List[Tuple[str, str]],
+    ) -> List[Tuple[Dict[str, Any], Dict[str, Any]]]:
         """
-   Pair players for a tournament based on their scores.
+        Pair players for a tournament based on their scores.
 
-    Args:
-        players_in_tournament (list):
-        A list of dictionaries representing players
-            in the tournament.
-        Each dictionary should contain at least a "score"
-            key representing the player's score.
+         Args:
+             players_in_tournament (list):
+             A list of dictionaries representing players
+                 in the tournament.
+             Each dictionary should contain at least a "score"
+                 key representing the player's score.
 
-    Returns:
-        list: A list of pairs, where each pair
-        consists of two players. The pairs
-            are determined based on the players'
-            scores, with higher-scoring players
-            being paired together where possible.
+         Returns:
+             list: A list of pairs, where each pair
+             consists of two players. The pairs
+                 are determined based on the players'
+                 scores, with higher-scoring players
+                 being paired together where possible.
 
-    Note:
-        The function sorts players by their scores
-        in descending order before
-        pairing them. If there are multiple pairs
-        that can be formed with the
-        same two players, the function selects the
-        pair that has not been formed
-        previously.
+         Note:
+             The function sorts players by their scores
+             in descending order before
+             pairing them. If there are multiple pairs
+             that can be formed with the
+             same two players, the function selects the
+             pair that has not been formed
+             previously.
 
         """
         pairs = []
         number_of_matches_to_play = math.floor(len(players_in_tournament) / 2)
         players_available = players_in_tournament.copy()
-        players_available = sorted(players_available, key=lambda
-                                   player: player["score"], reverse=True)
+        players_available = sorted(
+            players_available, key=lambda player: player["score"], reverse=True
+        )
         for _ in range(number_of_matches_to_play):
             player1 = players_available.pop(0)
             perfect_match = None
             for player2 in players_available:
-                if ((player1["chess_id"], player2["chess_id"])
-                    not in pairs_history and
-                   (player2["chess_id"], player1["chess_id"])
-                   not in pairs_history):
+                if (player1["chess_id"], player2["chess_id"]) not in pairs_history and (
+                    player2["chess_id"],
+                    player1["chess_id"],
+                ) not in pairs_history:
                     perfect_match = player2
                     players_available.remove(player2)
                     break
@@ -257,15 +299,16 @@ class TournamentController:
                 perfect_match = player2
                 pair = [player1, perfect_match]
                 pairs.append(pair)
-                pairs_history.append((player1["chess_id"],
-                                      perfect_match["chess_id"]))
+                pairs_history.append((player1["chess_id"], perfect_match["chess_id"]))
             else:
                 player2 = players_available.pop(0)
                 pair = [player1, player2]
                 pairs.append(pair)
         return pairs
 
-    def create_new_tournament(self, players_in_tournament):
+    def create_new_tournament(
+        self, players_in_tournament: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """
         Create a new tournament.
 
@@ -276,53 +319,60 @@ class TournamentController:
         Returns:
             dict: Data of the new tournament.
         """
-        file_path = "data/tournament_list.json"
-        all_tournaments = self.load_tournament_from_json(file_path)
-        new_tournament_data = self.tournament_view.input_tournament_data(
-            players_in_tournament)
+        file_path: str = "data/tournament_list.json"
+        all_tournaments: List[Dict[str, Any]] = self.load_tournament_from_json(
+            file_path
+        )
+        new_tournament_data: Dict[str, Any] = (
+            self.tournament_view.input_tournament_data(players_in_tournament)
+        )
         all_tournaments.append(new_tournament_data)
         self.save_tournament_to_json(all_tournaments, file_path)
         return new_tournament_data
 
-    def participating_players_list(self):
+    def participating_players_list(self) -> List[Dict[str, Any]]:
         """
         Form the list of players participating in the tournament.
 
         Returns:
             list: List of players participating in the tournament.
         """
-        existing_players = self.player_controller.load_players_from_json(
-            "data/player_list.json")
-        players_in_tournament = []
+        existing_players: List[Dict[str, Any]] = (
+            self.player_controller.load_players_from_json("data/player_list.json")
+        )
+        players_in_tournament: List[Dict[str, Any]] = []
         while True:
             chess_id = self.player_view.chess_id_input()
             found_player = False
             for player_data in existing_players:
-                if player_data['chess_id'] == chess_id:
-                    if any(player['chess_id'] == player_data["chess_id"]
-                           for player in players_in_tournament):
+                if player_data["chess_id"] == chess_id:
+                    if any(
+                        player["chess_id"] == player_data["chess_id"]
+                        for player in players_in_tournament
+                    ):
                         self.tournament_view.added_already(player_data)
                         found_player = True
                     elif player_data not in players_in_tournament:
                         players_in_tournament.append(player_data)
-                        self.tournament_view.added_to_tournament_input(
-                            player_data)
+                        self.tournament_view.added_to_tournament_input(player_data)
                         found_player = True
                     else:
                         found_player = False
                     break
             if not found_player:
                 self.tournament_view.player_not_found_input()
-            add_more = self.tournament_view.add_more_input()
+            add_more: str = self.tournament_view.add_more_input()
             if add_more != "":
                 if self.verify_pair_players(players_in_tournament):
                     break
                 else:
-                    print("Le nombre de joueur doit etre pair. "
-                          "Ajoutez un autre joueur.")
+                    self.tournament_view.must_be_pair()
+
         return players_in_tournament
 
-    def save_tournament_to_json(self, all_tournaments, file_path):
+    def save_tournament_to_json(
+        self, all_tournaments: List[Dict[str, Any]], file_path: str
+    ) -> None:
         """
         Save tournaments to a JSON file.
 
@@ -333,31 +383,37 @@ class TournamentController:
         with open(file_path, "w") as json_file:
             json.dump(all_tournaments, json_file, indent=4)
 
-    def load_most_recent_tournament(self, file_path):
+    def load_most_recent_tournament(self, file_path: str) -> None:
         """
         Load the most recent ongoing tournament.
 
         Args:
             file_path (str): Path to the JSON file containing tournaments.
         """
-        all_tournaments = self.load_tournament_from_json(file_path)
-        sorted_tournaments = sorted(all_tournaments,
-                                    key=lambda tournament:
-                                    tournament['start_date'], reverse=True)
+        all_tournaments: List[Dict[str, Any]] = self.load_tournament_from_json(
+            file_path
+        )
+        sorted_tournaments: List[Dict[str, Any]] = sorted(
+            all_tournaments,
+            key=lambda tournament: tournament["start_date"],
+            reverse=True,
+        )
         if not sorted_tournaments:
             self.tournament_view.no_unfinished_tournament()
         else:
-            most_recent_tournament = sorted_tournaments[0]
-            if most_recent_tournament['end_date'] is None:
-                new_tournament_data = Tournament(
-                    **most_recent_tournament).to_json()
-                players_in_tournament = new_tournament_data[
-                    'players_in_tournament']
+            most_recent_tournament: Dict[str, Any] = sorted_tournaments[0]
+            if most_recent_tournament["end_date"] is None:
+                new_tournament_data: Dict[str, Any] = Tournament(
+                    **most_recent_tournament
+                ).to_json()
+                players_in_tournament: List[Dict[str, Any]] = new_tournament_data[
+                    "players_in_tournament"
+                ]
                 self.run_tournament(new_tournament_data, players_in_tournament)
             else:
                 self.tournament_view.no_unfinished_tournament()
 
-    def load_tournament_from_json(self, file_path):
+    def load_tournament_from_json(self, file_path: str) -> List[Dict[str, Any]]:
         """
         Load all tournaments from a JSON file.
 
@@ -367,10 +423,10 @@ class TournamentController:
         Returns:
             list: List of all tournaments.
         """
-        all_tournaments = []
+        all_tournaments: List[Dict[str, Any]] = []
         try:
             with open(file_path, "r") as json_file:
-                tournament_data_list = json.load(json_file)
+                tournament_data_list: List[Dict[str, Any]] = json.load(json_file)
                 for tournament_data in tournament_data_list:
                     tournament = Tournament(**tournament_data)
                     all_tournaments.append(tournament.to_json())
@@ -378,7 +434,9 @@ class TournamentController:
             self.player_view.empty_json_print()
         return all_tournaments
 
-    def create_matches(self, pairs):
+    def create_matches(
+        self, pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]]
+    ) -> List[Tuple[List[str], List[int]]]:
         """
         Create matches from pairs of players.
 
@@ -388,48 +446,58 @@ class TournamentController:
         Returns:
             list: List of matches.
         """
-        matches = []
+        matches: List[Tuple[List[str, int], List[str, int]]] = []
         for pair in pairs:
             player1 = pair[0]
             player2 = pair[1]
-            match = ([f"{player1['name']} {player1['surname']}",
-                      player1['score']], [f"{player2['name']} "
-                                          f"{player2['surname']}",
-                                          player2['score']])
+            match = (
+                [f"{player1['name']} {player1['surname']}", player1["score"]],
+                [f"{player2['name']} " f"{player2['surname']}", player2["score"]],
+            )
             matches.append(match)
         return matches
 
-    def update_players_score(self, match, choice, players_in_tournament):
+    def update_players_score(
+        self,
+        match: Tuple[Dict[str, Any], Dict[str, Any]],
+        choice: str,
+        players_in_tournament,
+    ):
         """
-       Update players' scores based on match results.
+        Update players' scores based on match results.
 
         Args:
-            match (list): Match details.
+            match (Tuple[Dict[str, Any], Dict[str, Any]]): Match details.
             choice (str): Player's choice for match result.
-            players_in_tournament (list):
-            List of players participating in the tournament.
+            players_in_tournament (list): List of players participating in the tournament.
         """
-        player1 = next(player for player in players_in_tournament if
-                       player['name'] + " " + player['surname'] == match[0][0])
-        player2 = next(player for player in players_in_tournament if
-                       player['name'] + " " + player['surname'] == match[1][0])
+        player1 = next(
+            player
+            for player in players_in_tournament
+            if player["name"] + " " + player["surname"] == match[0][0]
+        )
+        player2 = next(
+            player
+            for player in players_in_tournament
+            if player["name"] + " " + player["surname"] == match[1][0]
+        )
         if choice == "1":
             match[0][1] += 1
-            player1['score'] += 1
+            player1["score"] += 1
         elif choice == "N":
             match[0][1] += 0.5
             match[1][1] += 0.5
-            player1['score'] += 0.5
-            player2['score'] += 0.5
+            player1["score"] += 0.5
+            player2["score"] += 0.5
         elif choice == "2":
             match[1][1] += 1
-            player2['score'] += 1
+            player2["score"] += 1
         elif choice == "Q":
             exit()
         else:
             self.menu_view.input_error()
 
-    def verify_pair_players(self, players_in_tournament):
+    def verify_pair_players(self, players_in_tournament: List[Dict[str, Any]]) -> bool:
         """
         Verify if the number of players is even.
 
