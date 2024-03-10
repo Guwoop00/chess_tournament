@@ -47,8 +47,6 @@ class MainController:
                 )
             elif tournament_sub_choice == 3:
                 self.main_menu()
-            else:
-                self.main_menu()
 
         elif choice == 2:  # Gestion des joueurs
             player_menu_options: dict = self.menu_view.players_menu_options()
@@ -59,8 +57,6 @@ class MainController:
             if player_sub_choice == 1:
                 self.player_controller.create_new_player()
             elif player_sub_choice == 2:
-                self.main_menu()
-            else:
                 self.main_menu()
 
         elif choice == 3:  # Gestion des rapports
@@ -75,7 +71,7 @@ class MainController:
             elif player_sub_choice == 2:
                 self.menu_view.player_list_print()
                 self.player_view.display_player_list(all_players)
-            else:
+            elif player_sub_choice == 3:
                 self.main_menu()
 
         elif choice == 4:

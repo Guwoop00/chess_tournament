@@ -131,7 +131,7 @@ class TournamentView:
                 print(f"\nMatches: \n{matches}")
 
     @staticmethod
-    def display_tournament_resume(new_tournament_json):
+    def display_tournament_summary(new_tournament_json):
         """
         Displays the resume of a tournament including its name, place, start and end dates,
         total rounds, description, participants list, and rounds information.
