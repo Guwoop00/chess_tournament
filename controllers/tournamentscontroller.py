@@ -449,7 +449,7 @@ class TournamentController:
         for pair in pairs:
             player1 = (pair[0]["name"], pair[0]["surname"], pair[0]["score"])
             player2 = (pair[1]["name"], pair[1]["surname"], pair[1]["score"])
-            match = Match(player1, player2)
+            match = Match(player1, pair[0]["score"], player2, pair[1]["score"])
             matches.append(match)
         return matches
 
@@ -470,14 +470,13 @@ class TournamentController:
         player1 = next(
             player
             for player in players_in_tournament
-            if player["name"] + " " + player["surname"] == match.player1[0] + " " + match.player1[1]
+            if player["name"] + " " + player["surname"] == match.players[0][0][0] + " " + match.players[0][0][1]
         )
         player2 = next(
             player
             for player in players_in_tournament
-            if player["name"] + " " + player["surname"] == match.player2[0] + " " + match.player2[1]
+            if player["name"] + " " + player["surname"] == match.players[1][0][0] + " " + match.players[1][0][1]
         )
-
         if match_result_choice == "1":
             player1["score"] += 1
         elif match_result_choice == "N":
