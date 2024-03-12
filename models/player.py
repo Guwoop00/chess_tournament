@@ -12,9 +12,6 @@ class Player:
     def __repr__(self):
         return f"{self.name} {self.surname} {self.chess_id} {self.date_of_birth} {self.score}"
 
-    def update_score(self, score_to_add):
-        self.score += score_to_add
-
     def to_json(self):
         """
         Convert player data to a dictionary.

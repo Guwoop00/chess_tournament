@@ -15,7 +15,9 @@ from views.tournament import TournamentView
 class TournamentController:
 
     def __init__(self):
-        """Initializes the TournamentController."""
+        """
+        Initializes the TournamentController.
+        """
         self.player_view = PlayerView()
         self.tournament_view = TournamentView()
         self.player_controller = PlayerController()
@@ -23,11 +25,7 @@ class TournamentController:
 
     def launch_tournament(self) -> None:
         """
-        This function orchestrates the process of launching a new tournament.
-        It retrieves the list of participating players
-        using 'participating_players_list',
-        then runs the tournament using 'run_tournament'
-        with the newly created tournament data.
+        Orchestrates the process of launching a new tournament.
         """
         players_in_tournament: List[Dict[str, Any]] = self.participating_players_list()
         new_tournament_data: Dict[str, Any] = self.create_new_tournament(
@@ -62,19 +60,20 @@ class TournamentController:
                 pairs_history,
             )
             self.save_rounds_to_json()
-            self.ask_for_match_result(matches)
+            self.ask_for_match_result(matches, players_in_tournament)
             all_tournaments = self.load_tournament_from_json(
                 "data/tournament_list.json"
             )
-            new_tournament_json = self.update_tournament_data(
-                new_tournament_data,
-                current_round,
-                total_rounds,
-                round_name,
-                matches,
-                all_tournaments,
-                pairs_history,
-            )
+            for match in matches:
+                new_tournament_json = self.update_tournament_data(
+                    new_tournament_data,
+                    current_round,
+                    total_rounds,
+                    round_name,
+                    match,
+                    all_tournaments,
+                    pairs_history,
+                )
         resume = self.tournament_view.display_tournament_summary(new_tournament_json)
         self.tournament_view.display_resume(resume)
 
@@ -167,7 +166,7 @@ class TournamentController:
 
     def ask_for_match_result(
         self,
-        matches: List[Tuple[Dict[str, Any], Dict[str, Any]]],
+        matches: List[Tuple[Dict[str, Any], Dict[str, Any]]], players_in_tournament
     ) -> None:
         """
         Prompt for match results and update players' scores.
@@ -179,7 +178,7 @@ class TournamentController:
         """
         for match in matches:
             match_result_choice = self.tournament_view.get_result_option(match)
-            match.update_scores(match_result_choice)
+            self.update_players_score(match, match_result_choice, players_in_tournament)
 
     def update_tournament_data(
         self,
@@ -206,18 +205,9 @@ class TournamentController:
         if current_round == total_rounds:
             new_tournament_data["end_date"] = round_name.end_time
         self.tournament_view.display_matches(matches)
-
-        formatted_matches = [
-            (
-                [match.player1_name, match.player1_score],
-                [match.player2_name, match.player2_score],
-            )
-            for match in matches
-        ]
-        round_name.matches = formatted_matches
+        round_name.matches = matches.to_json()
         new_round_data = round_name.to_json()
         new_tournament_data["rounds"].append(new_round_data)
-
         new_tournament_data["pairs_history"] = pairs_history
         new_tournament_json = Tournament(**new_tournament_data).to_json()
         for i, tournament in enumerate(all_tournaments):
@@ -457,11 +447,48 @@ class TournamentController:
         """
         matches = []
         for pair in pairs:
-            player1 = pair[0]
-            player2 = pair[1]
+            player1 = (pair[0]["name"], pair[0]["surname"], pair[0]["score"])
+            player2 = (pair[1]["name"], pair[1]["surname"], pair[1]["score"])
             match = Match(player1, player2)
             matches.append(match)
         return matches
+
+    def update_players_score(
+        self,
+        match: Match,
+        match_result_choice: str,
+        players_in_tournament: List[Dict[str, Any]]
+    ):
+        """
+        Update players' scores based on match results.
+
+        Args:
+            match (Match): Match details.
+            match_result_choice (str): Player's choice for match result.
+            players_in_tournament (list): List of players participating in the tournament.
+        """
+        player1 = next(
+            player
+            for player in players_in_tournament
+            if player["name"] + " " + player["surname"] == match.player1[0] + " " + match.player1[1]
+        )
+        player2 = next(
+            player
+            for player in players_in_tournament
+            if player["name"] + " " + player["surname"] == match.player2[0] + " " + match.player2[1]
+        )
+
+        if match_result_choice == "1":
+            player1["score"] += 1
+        elif match_result_choice == "N":
+            player1["score"] += 0.5
+            player2["score"] += 0.5
+        elif match_result_choice == "2":
+            player2["score"] += 1
+        elif match_result_choice == "Q":
+            exit()
+        else:
+            self.menu_view.input_error()
 
     def verify_pair_players(self, players_in_tournament: List[Dict[str, Any]]) -> bool:
         """

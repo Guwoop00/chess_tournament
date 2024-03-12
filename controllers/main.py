@@ -32,7 +32,7 @@ class MainController:
             "Bienvenue au tournoi d'échecs :", main_menu_options
         )
 
-        if choice == 1:  # Gestion des tournois
+        if choice == 1:  # Tournament menu
             tournament_menu_options: dict = self.menu_view.tournament_menu_options()
             tournament_sub_choice: int = self.menu_view.display_menu(
                 "Gestion des tournois :", tournament_menu_options
@@ -48,7 +48,7 @@ class MainController:
             elif tournament_sub_choice == 3:
                 self.main_menu()
 
-        elif choice == 2:  # Gestion des joueurs
+        elif choice == 2:  # Players menu
             player_menu_options: dict = self.menu_view.players_menu_options()
             player_sub_choice: int = self.menu_view.display_menu(
                 "Gestion des joueurs :", player_menu_options
@@ -59,7 +59,7 @@ class MainController:
             elif player_sub_choice == 2:
                 self.main_menu()
 
-        elif choice == 3:  # Gestion des rapports
+        elif choice == 3:  # Reports menu
             rapports_menu_options: dict = self.menu_view.rapports_menu_options()
             player_sub_choice: int = self.menu_view.display_menu(
                 "Gestion des rapports :", rapports_menu_options
