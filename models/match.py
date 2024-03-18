@@ -2,7 +2,8 @@ from typing import Tuple
 
 
 class Match:
-    def __init__(self, player1: Tuple[str, float], score1: float, player2: Tuple[str, float], score2: float) -> None:
+    def __init__(self, player1: Tuple[str, float], score1: float,
+                 player2: Tuple[str, float], score2: float) -> None:
         """
         Initializes a Match object with two players represented by tuples.
 
@@ -21,8 +22,9 @@ class Match:
         Returns:
             str: String representation of the match.
         """
-        return f"([{self.players[0][0][0]} {self.players[0][0][1]}, {self.players[0][1]}], " \
-               f"[{self.players[1][0][0]} {self.players[1][0][1]}, {self.players[1][1]}])"
+        return ("[{} {}, {}], [{} {}, {}])".format(
+            self.players[0][0][0], self.players[0][0][1], self.players[0][1],
+            self.players[1][0][0], self.players[1][0][1], self.players[1][1]))
 
     def __repr__(self) -> str:
         """
@@ -31,8 +33,9 @@ class Match:
         Returns:
             str: String representation of the match.
         """
-        return f"([{self.players[0][0][0]} {self.players[0][0][1]}, {self.players[0][1]}], " \
-               f"[{self.players[1][0][0]} {self.players[1][0][1]}, {self.players[1][1]}])"
+        return ("[{} {}, {}], [{} {}, {}])".format(
+            self.players[0][0][0], self.players[0][0][1], self.players[0][1],
+            self.players[1][0][0], self.players[1][0][1], self.players[1][1]))
 
     def to_json(self) -> str:
         """
@@ -41,5 +44,6 @@ class Match:
         Returns:
             str: JSON representation of the match.
         """
-        return f"([{self.players[0][0][0]} {self.players[0][0][1]}, {self.players[0][1]}], " \
-               f"[{self.players[1][0][0]} {self.players[1][0][1]}, {self.players[1][1]}])"
+        return ("[{} {}, {}], [{} {}, {}])".format(
+            self.players[0][0][0], self.players[0][0][1], self.players[0][1],
+            self.players[1][0][0], self.players[1][0][1], self.players[1][1]))

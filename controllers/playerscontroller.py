@@ -40,9 +40,11 @@ class PlayerController:
             new_player_data: Dict[str, str] = self.player_view.input_player_data(
                 chess_id
             )
+
             existing_players.append(new_player_data)
             self.save_players_to_json(existing_players, file_path)
             self.player_view.player_created()
+
             if not self.player_view.ask_to_add_another_player():
                 break
 
@@ -79,9 +81,11 @@ class PlayerController:
         try:
             with open(file_path, "r") as json_file:
                 player_data_list: List[Dict[str, str]] = json.load(json_file)
+
                 for player_data in player_data_list:
                     player = Player(**player_data)
                     all_players.append(player.to_json())
+
         except json.decoder.JSONDecodeError:
             self.player_view.empty_json_print()
         return all_players
